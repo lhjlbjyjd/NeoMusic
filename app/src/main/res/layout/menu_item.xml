@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_height="50dp"
+        app:srcCompat="@drawable/rectangle"
+        android:id="@+id/center"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="25dp"
+        android:layout_marginEnd="25dp"
+        android:layout_width="150dp" />
+
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:srcCompat="@drawable/circle"
+        android:id="@+id/left_border"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/center"
+        android:layout_toStartOf="@+id/center"
+        android:layout_marginRight="-25dp"
+        android:layout_marginEnd="-25dp"/>
+
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:srcCompat="@drawable/circle"
+        android:id="@+id/right_border"
+        android:layout_marginLeft="-50dp"
+        android:layout_marginStart="-50dp"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/center"
+        android:layout_toEndOf="@+id/center" />
+
+    <ImageView
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:padding="6dp"
+        app:srcCompat="@drawable/ic_shuffle_black_18dp"
+        android:background="@drawable/oval"
+        android:layout_marginLeft="-17.5dp"
+        android:layout_marginStart="-17.5dp"
+        android:layout_marginBottom="7.5dp"
+        android:id="@+id/item_icon"
+        android:layout_alignBottom="@+id/center"
+        android:layout_alignLeft="@+id/center"
+        android:layout_alignStart="@+id/center" />
+
+    <TextView
+        android:text="Перемешать"
+        android:layout_width="wrap_content"
+        android:layout_alignBottom="@+id/item_icon"
+        android:layout_toRightOf="@+id/item_icon"
+        android:layout_toEndOf="@+id/item_icon"
+        android:layout_marginLeft="7dp"
+        android:layout_marginStart="7dp"
+        android:layout_marginBottom="10dp"
+        android:id="@+id/item_caption"
+        android:layout_alignRight="@+id/center"
+        android:layout_alignEnd="@+id/center"
+        android:textColor="#ffffff"
+        android:layout_height="18dp" />
+
+</RelativeLayout>
