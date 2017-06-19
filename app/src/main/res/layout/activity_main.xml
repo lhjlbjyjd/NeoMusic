@@ -7,16 +7,24 @@
     tools:context="com.trident.neomusic.MainActivity"
     android:background="#ffffffff">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!" />
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/songList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none"/>
 
     <com.trident.neomusic.FloatingMusicControl
+        android:id="@+id/fmc"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
     </com.trident.neomusic.FloatingMusicControl>
+
+    <com.trident.neomusic.FastScroller
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:id="@+id/fastscroller"
+        android:layout_marginTop="3dp"/>
 
 
 </RelativeLayout>
