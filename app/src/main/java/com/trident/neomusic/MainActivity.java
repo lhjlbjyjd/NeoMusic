@@ -1,8 +1,17 @@
 package com.trident.neomusic;
 
+import android.Manifest;
 import android.animation.ObjectAnimator;
+import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Vibrator;
+import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -28,6 +37,12 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    private static final String TAG = LogHelper.makeLogTag(MainActivity.class);
+    private static final String SAVED_MEDIA_ID="com.trident.neomusic.MEDIA_ID";
+    private static final String FRAGMENT_TAG = "list_container";
+    List<Song> songs = new ArrayList<>();
+    public static final String EXTRA_START_FULLSCREEN = "com.trident.neomusic.EXTRA_START_FULLSCREEN";
+    public static final String EXTRA_CURRENT_MEDIA_DESCRIPTION = "com.trident.neomusic.CURRENT_MEDIA_DESCRIPTION";
 
 
     @Override
@@ -42,6 +57,32 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
+
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+
+            } else {
+
+                // No explanation needed, we can request the permission.
+
+                ActivityCompat.requestPermissions(this, new String[]{"android.permission.READ_EXTERNAL_STORAGE"}, 0);
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        }else{
+            getSongsList();
+        }
+
         mRecyclerView = (RecyclerView) findViewById(R.id.songList);
 
         FastScroller fastScroller=(FastScroller)findViewById(R.id.fastscroller);
@@ -55,35 +96,6 @@ public class MainActivity extends AppCompatActivity {
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        List<Song> songs = new ArrayList<>();
-        
-        songs.add(new Song("A New Song"));
-        songs.add(new Song("B New Song"));
-        songs.add(new Song("C New Song"));
-        songs.add(new Song("D New Song"));
-        songs.add(new Song("E New Song"));
-        songs.add(new Song("F New Song"));
-        songs.add(new Song("G New Song"));
-        songs.add(new Song("H New Song"));
-        songs.add(new Song("I New Song"));
-        songs.add(new Song("J New Song"));
-        songs.add(new Song("K New Song"));
-        songs.add(new Song("L New Song"));
-        songs.add(new Song("M New Song"));
-        songs.add(new Song("N New Song"));
-        songs.add(new Song("O New Song"));
-        songs.add(new Song("P New Song"));
-        songs.add(new Song("Q New Song"));
-        songs.add(new Song("R New Song"));
-        songs.add(new Song("S New Song"));
-        songs.add(new Song("T New Song"));
-        songs.add(new Song("U New Song"));
-        songs.add(new Song("V New Song"));
-        songs.add(new Song("W New Song"));
-        songs.add(new Song("X New Song"));
-        songs.add(new Song("Y New Song"));
-        songs.add(new Song("Z New Song"));
-
         // specify an adapter (see also next example)
         mAdapter = new SongsListAdapter(this, songs);
         mRecyclerView.setAdapter(mAdapter);
@@ -92,5 +104,50 @@ public class MainActivity extends AppCompatActivity {
     public void cancelTasks(){
         findViewById(R.id.context_menu).setVisibility(View.GONE);
         findViewById(R.id.triangle).setVisibility(View.GONE);
+    }
+
+    public void getSongsList(){
+        ContentResolver musicResolver = getContentResolver();
+        Uri musicUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        Cursor musicCursor = musicResolver.query(musicUri, null, null, null, null);
+        if(musicCursor!=null && musicCursor.moveToFirst()){
+            //get columns
+            int titleColumn = musicCursor.getColumnIndex
+                    (android.provider.MediaStore.Audio.Media.TITLE);
+            int idColumn = musicCursor.getColumnIndex
+                    (android.provider.MediaStore.Audio.Media._ID);
+            int artistColumn = musicCursor.getColumnIndex
+                    (android.provider.MediaStore.Audio.Media.ARTIST);
+            //add songs to list
+            do {
+                long thisId = musicCursor.getLong(idColumn);
+                String thisTitle = musicCursor.getString(titleColumn);
+                String thisArtist = musicCursor.getString(artistColumn);
+                songs.add(new Song(thisId, thisTitle, thisArtist));
+            }
+            while (musicCursor.moveToNext());
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 0: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    grantUriPermission("com.trident.neomusic", MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    getSongsList();
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+        }
     }
 }
